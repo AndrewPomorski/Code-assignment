@@ -6,13 +6,13 @@ class DataFactory():
         data = []
         for el in range(elements):
             data.append({
-                "symbol": self.get_symbol(symbols),
-                "price": self.get_random_price()
+                "symbol": self.__get_symbol(symbols),
+                "price": self.__get_random_price()
             })
         return data
 
-    def get_symbol(self, symbols):
+    def __get_symbol(self, symbols):
         return random.choice(symbols)
     
-    def get_random_price(self):
+    def __get_random_price(self):
         return random.randint(100, 2000)
