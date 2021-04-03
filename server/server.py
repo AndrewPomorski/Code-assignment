@@ -14,12 +14,13 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 
     def open(self):
         print("New client connected")
-        self.write_message("You are connected")
         clients.append(self)
 
     def on_message(self, message):
         print("message: " + message)
-        self.write_message(message)
+        settings = json.loads(message)
+        print(settings)
+
 
     def on_close(self):
         print("Client disconnected")

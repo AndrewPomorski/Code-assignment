@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridApi } from 'ag-grid-community';
-import { UpdateData, WebsocketService } from '../../shared/services/websocket/websocket.service';
+import { Settings, UpdateData, WebsocketService } from '../../shared/services/websocket/websocket.service';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -51,6 +51,10 @@ export class DashboardComponent implements OnInit {
     ).subscribe(data => {
         this.handleIncomingData(data);
     });
+  }
+
+  settingSubmittedHandler(e: Settings): void {
+    this.websocketService.submitSettings(e);
   }
 
   private handleIncomingData(data: Array<UpdateData>): void {

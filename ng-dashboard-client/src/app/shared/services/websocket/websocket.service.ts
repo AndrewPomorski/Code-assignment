@@ -12,16 +12,21 @@ export class WebsocketService {
   }
 
   private dataUpdateSubject = new Subject<Array<UpdateData>>();
+  private webSocket: WebSocket;
 
   private initWebsocketConnection(): void {
-    const ws = new WebSocket('ws://localhost:8888/wss');
-    ws.onmessage = msg => {
+    this.webSocket = new WebSocket('ws://localhost:8888/wss');
+    this.webSocket.onmessage = msg => {
       this.dataUpdateSubject.next(JSON.parse(msg.data));
     };
   }
 
   getDataSubject(): Subject<Array<UpdateData>> {
     return this.dataUpdateSubject;
+  }
+
+  submitSettings(settings: Settings): void {
+    this.webSocket.send(JSON.stringify(settings));
   }
 
 
@@ -32,4 +37,10 @@ export class WebsocketService {
 export interface UpdateData {
   symbol: string,
   price: number,
+}
+
+export interface Settings {
+  elementsPerUpdate: number,
+  updateFrequency: number,
+  symbols: Array<string>,
 }

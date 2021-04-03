@@ -1,6 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~ag-grid-community/dist/styles/ag-grid.css";
 @import "~ag-grid-community/dist/styles/ag-theme-balham.css";
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+html body {
+    font-family: 'Roboto', sans-serif; 
+}
 
 .row-red {
     background: #ff8484 !important;
