@@ -2,6 +2,7 @@ import tornado.websocket
 from datetime import timedelta
 from config.config import Config
 from data_factory.data_factory import DataFactory
+from db_handler.db_handler import DbHandler
 import json
 
 PORT = 8888
@@ -10,6 +11,7 @@ clients = []
 class DataHandler():
     def __init__(self): 
         config = Config()
+        self.dbh = DbHandler()
         self.config = config.get_config()
         self.data_factory = DataFactory()
         print(self.config)
@@ -21,6 +23,7 @@ class DataHandler():
         try:
             for client in clients:
                 data = self.data_factory.get_data(self.config['symbols'], self.config['elements_per_update'])
+                # self.dbh.save_to_db(data)
                 client.write_message(json.dumps(data))
         finally:
             tornado.ioloop.IOLoop.instance().add_timeout(timedelta(milliseconds=self.config['update_frequency_milliseconds']), self.update_data)
