@@ -10,16 +10,16 @@ class Config():
 
     def get_config(self):
         return {
-            "symbols" : self.get_default_symbols(),
-            "update_frequency_milliseconds" : self.get_default_frequency(),
-            "elements_per_update": self.get_default_elements_per_update()
+            "symbols" : self.__get_default_symbols(),
+            "update_frequency_milliseconds" : self.__get_default_frequency(),
+            "elements_per_update": self.__get_default_elements_per_update()
         }
 
-    def get_default_symbols(self):
+    def __get_default_symbols(self):
         return self.symbols
     
-    def get_default_frequency(self):
+    def __get_default_frequency(self):
         return self.update_frequency_milliseconds
 
-    def get_default_elements_per_update(self):
+    def __get_default_elements_per_update(self):
         return self.elements_per_update
