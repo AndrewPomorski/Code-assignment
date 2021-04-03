@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { AgGridModule } from 'ag-grid-angular';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @NgModule({
   declarations: [
@@ -10,7 +11,8 @@ import { AgGridModule } from 'ag-grid-angular';
   ],
   imports: [
     BrowserModule,
-    AgGridModule.withComponents([])
+    AgGridModule.withComponents([]),
+    DashboardModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
