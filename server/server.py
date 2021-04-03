@@ -7,6 +7,26 @@ import json
 PORT = 8888
 clients = []
 
+class DataHandler():
+    def __init__(self): 
+        config = Config()
+        self.config = config.get_config()
+        self.data_factory = DataFactory()
+        print(self.config)
+
+    def update_config(self, config):
+        self.config = config
+
+    def update_data(self):
+        try:
+            for client in clients:
+                data = self.data_factory.get_data(self.config['symbols'], self.config['elements_per_update'])
+                client.write_message(json.dumps(data))
+        finally:
+            tornado.ioloop.IOLoop.instance().add_timeout(timedelta(milliseconds=self.config['update_frequency_milliseconds']), self.update_data)
+
+data_handler = DataHandler()
+
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
 
     def check_origin(self, origin):
@@ -17,9 +37,14 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         clients.append(self)
 
     def on_message(self, message):
-        print("message: " + message)
         settings = json.loads(message)
         print(settings)
+        config = {
+            "symbols": settings['symbols'],
+            "update_frequency_milliseconds": int(settings['updateFrequency']),
+            "elements_per_update": int(settings['elementsPerUpdate'])
+        }
+        data_handler.update_config(config)
 
 
     def on_close(self):
@@ -27,20 +52,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         clients.remove(self)
 
 
-class DataHandler():
-    def __init__(self): 
-        config = Config()
-        self.config = config.get_config()
-        self.data_factory = DataFactory()
-        print(self.config)
 
-    def update_data(self):
-        try:
-            for client in clients:
-                data = self.data_factory.get_data(self.config['symbols'], self.config['elements_per_update'])
-                client.write_message(json.dumps(data))
-        finally:
-            tornado.ioloop.IOLoop.instance().add_timeout(timedelta(milliseconds=self.config['update_frequency_milliseconds']), self.update_data)
 
 
 socket = tornado.web.Application([(r"/wss", WebSocketHandler),])
