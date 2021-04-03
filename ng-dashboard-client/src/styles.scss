@@ -1,3 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~ag-grid-community/dist/styles/ag-grid.css";
 @import "~ag-grid-community/dist/styles/ag-theme-balham.css";
+
+.row-red {
+    background: #ff8484 !important;
+}
+
+.row-green {
+    background:#7CFC00 !important;
+}
