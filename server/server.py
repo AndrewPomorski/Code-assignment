@@ -1,16 +1,50 @@
-import asyncio
-import websockets
+import tornado.websocket
+from datetime import timedelta
+from config.config import Config
+from data_factory.data_factory import DataFactory
+import json
 
-class WSHandler():
+PORT = 8888
+clients = []
 
-    async def update(self):
-        message = await websocket.recv()
+class WebSocketHandler(tornado.websocket.WebSocketHandler):
+
+    def check_origin(self, origin):
+        return True
+
+    def open(self):
+        print("New client connected")
+        self.write_message("You are connected")
+        clients.append(self)
+
+    def on_message(self, message):
         print("message: " + message)
-        await websocket.send("Responding...")
+        self.write_message(message)
+
+    def on_close(self):
+        print("Client disconnected")
+        clients.remove(self)
 
 
+class DataHandler():
+    def __init__(self): 
+        config = Config()
+        self.config = config.get_config()
+        self.data_factory = DataFactory()
+        print(self.config)
+
+    def update_data(self):
+        try:
+            for client in clients:
+                data = self.data_factory.get_data(self.config['symbols'], self.config['elements_per_update'])
+                client.write_message(json.dumps(data))
+        finally:
+            tornado.ioloop.IOLoop.instance().add_timeout(timedelta(milliseconds=self.config['update_frequency_milliseconds']), self.update_data)
+
+
+socket = tornado.web.Application([(r"/wss", WebSocketHandler),])
 if __name__ == "__main__":
-    ws_handler = WSHandler()
-    start_server = websockets.serve(ws_handler.update, 'localhost', 8000)
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
+    data_handler  = DataHandler()
+    socket.listen(PORT)
+    tornado.ioloop.IOLoop.instance().add_timeout(timedelta(milliseconds=300), data_handler.update_data)
+    tornado.ioloop.IOLoop.instance().start()
