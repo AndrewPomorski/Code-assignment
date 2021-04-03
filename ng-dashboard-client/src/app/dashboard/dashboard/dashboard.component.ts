@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UpdateData, WebsocketService } from '../../shared/services/websocket/websocket.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,13 +14,21 @@ export class DashboardComponent implements OnInit {
   ];
 
 
-  rowData = [
-    { symbol: 'AAAA', price: 200 }
-  ]
+  rowData = [];
 
-  constructor() { }
+  constructor(
+    private websocketService: WebsocketService,
+  ) { }
 
   ngOnInit(): void {
+    this.websocketService.getDataSubject().pipe(
+    ).subscribe(data =>{
+      this.handleIncomingData(data);
+    });
+  }
+
+  private handleIncomingData(data: Array<UpdateData>): void {
+    this.rowData = [...data, ...this.rowData];
   }
 
 

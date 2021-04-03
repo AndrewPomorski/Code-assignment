@@ -22,4 +22,11 @@ describe('DashboardComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should initialize correct columns', () => {
+    expect(component.columnDefs).toEqual(jasmine.arrayContaining([
+      { headerName: 'Symbol', field: 'symbol' },
+      { headerName: 'Price', field: 'price' }, 
+    ]));
+  });
 });
